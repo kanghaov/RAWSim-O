@@ -11,6 +11,7 @@ namespace RAWSimO.MultiAgentPathFinding
 {
     /// <summary>
     /// Interface for an optimizer for the Multi Agent Path Finding Problem
+    /// translate abouve message to chinese: 多智能体路径规划问题的优化器的接口
     /// </summary>
     public abstract class PathFinder
     {
@@ -21,54 +22,63 @@ namespace RAWSimO.MultiAgentPathFinding
 
         /// <summary>
         /// The stopwatch
+        /// translate abouve message to chinese: 计时器
         /// </summary>
         public Stopwatch Stopwatch;
 
         /// <summary>
         /// The length of a wait step
+        /// translate abouve message to chinese: 等待步长的长度
         /// </summary>
         public double LengthOfAWaitStep = 5.0;
 
         /// <summary>
         /// The runtime limit per call per agent
+        /// translate abouve message to chinese: 每个代理的每次调用的运行时限制
         /// </summary>
         public double RuntimeLimitPerAgent = .05;
 
         /// <summary>
         /// The runtime limit per call
+        /// translate abouve message to chinese: 每次调用的运行时限制
         /// </summary>
         public double RunTimeLimitOverall = 1.0;
 
         /// <summary>
         /// The seed to use for all randomizers.
+        /// translate abouve message to chinese: 用于所有随机器的种子
         /// </summary>
         protected Random Randomizer;
 
         /// <summary>
         /// The logger to use.
+        /// translate abouve message to chinese: 用于所有随机器的种子
         /// </summary>
-        internal PathPlanningCommunicator Communicator;
+        internal PathPlanningCommunicator Communicator; // internal means that it is only visible to the current assembly
 
         /// <summary>
         /// constructor
+        /// translate abouve message to chinese: 构造函数
         /// </summary>
         /// <param name="graph">graph</param>
         /// <param name="seed">The seed to use for the randomizer.</param>
         /// <param name="communicator">The logger to use.</param>
         public PathFinder(Graph graph, int seed, PathPlanningCommunicator communicator)
         {
-            this.Randomizer = new Random(seed);
-            this.Graph = graph;
-            this.Stopwatch = new Stopwatch();
-            this.Communicator = communicator;
+            this.Randomizer = new Random(seed); // seed is used to generate a sequence of numbers that are not random but deterministic, this. means that the randomizer is only visible to the current class
+            this.Graph = graph; // graph is used to store the graph
+            this.Stopwatch = new Stopwatch(); // stopwatch is used to measure the time
+            this.Communicator = communicator; // communicator is used to log the information
         }
 
         /// <summary>
         /// Find the path for all the agents.
+        /// translate abouve message to chinese: 查找所有代理的路径
         /// </summary>
         /// <param name="currentTime">The current time.</param>
         /// <param name="agents">agents</param>
-        public abstract void FindPaths(double currentTime, List<Agent> agents);
+        public abstract void FindPaths(double currentTime, List<Agent> agents); // public means that it is visible to all assemblies
+        /// abstract means that the method is not implemented here but in a derived class
 
         /// <summary>
         /// Finds a sequence of elevators with must be visit to reach the end node.
@@ -93,6 +103,7 @@ namespace RAWSimO.MultiAgentPathFinding
     {
         /// <summary>
         /// A dummy logger that can be used that does nothing.
+        /// translate abouve message to chinese: 一个可以什么都不做的虚拟日志记录器
         /// </summary>
         public static readonly PathPlanningCommunicator DUMMY_COMMUNICATOR = new PathPlanningCommunicator(null, null, null, null, null);
         /// <summary>
@@ -167,6 +178,7 @@ namespace RAWSimO.MultiAgentPathFinding
 
     /// <summary>
     /// solution path
+    /// translate abouve message to chinese: 解决方案路径
     /// </summary>
     public class Path
     {
@@ -314,14 +326,15 @@ namespace RAWSimO.MultiAgentPathFinding
             /// A <see cref="System.String" /> that represents this instance.
             /// </returns>
             public override string ToString()
+            // public override means that the method is not implemented here but in a derived class
             {
                 StringBuilder sb = new StringBuilder();
-                sb.Append("Goto ").Append(Node);
+                sb.Append("Goto ").Append(Node); // example: Goto 1
                 if (StopAtNode)
-                    sb.Append(" and Stop");
+                    sb.Append(" and Stop"); // example: Goto 1 and Stop
                 if (WaitTimeAfterStop > 0)
-                    sb.Append(" and Wait ").Append(WaitTimeAfterStop);
-                return sb.ToString();
+                    sb.Append(" and Wait ").Append(WaitTimeAfterStop); // example: Goto 1 and Stop and Wait 5
+                return sb.ToString(); // example: Goto 1 and Stop and Wait 5
             }
         }
 
@@ -332,17 +345,19 @@ namespace RAWSimO.MultiAgentPathFinding
         /// A <see cref="System.String" /> that represents this instance.
         /// </returns>
         public override string ToString()
+        // override means that the method is not implemented here but in a derived class
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(); // stringbuilder is used to build a string
             foreach (var action in _actions)
             {
                 sb.Append(action.ToString()).Append("; ");
             }
-            return sb.ToString();
+            return sb.ToString(); // 
         }
 
         /// <summary>
         /// Deletes the stop flag in position index if possible.
+        /// translate abouve message to chinese: 如果可能，删除位置索引中的停止标志
         /// </summary>
         /// <param name="Graph">The graph.</param>
         /// <param name="index">The index.</param>
@@ -354,13 +369,14 @@ namespace RAWSimO.MultiAgentPathFinding
                 throw new NotSupportedException("No need to support it yet!");
 
             //get the nodes
-            var lastAction = _actions.Last.Value;
-            var preLastAction = _actions.Last.Previous.Value;
-            var prepreLastAction = _actions.Last.Previous.Previous.Value;
+            var lastAction = _actions.Last.Value; // last action is the last action in the list
+            var preLastAction = _actions.Last.Previous.Value; // prelast action is the action before the last action in the list
+            var prepreLastAction = _actions.Last.Previous.Previous.Value; // preprelast action is the action before the prelast action in the list
 
             //get the incoming and outgoing edge
-            var incomingEdge = Graph.BackwardEdges[preLastAction.Node].FirstOrDefault(e => e.From == prepreLastAction.Node);
-            var outgoingEdge = Graph.Edges[preLastAction.Node].FirstOrDefault(e => e.To == lastAction.Node);
+            //translate abouve message to chinese: 获取传入和传出边缘
+            var incomingEdge = Graph.BackwardEdges[preLastAction.Node].FirstOrDefault(e => e.From == prepreLastAction.Node); // backward edges are the edges that are going backwards
+            var outgoingEdge = Graph.Edges[preLastAction.Node].FirstOrDefault(e => e.To == lastAction.Node); // edges are the edges that are going forward
 
             //edges must be found and the angle must equal
             if (incomingEdge == null || outgoingEdge == null || incomingEdge.Angle != outgoingEdge.Angle)
@@ -372,12 +388,13 @@ namespace RAWSimO.MultiAgentPathFinding
 
         /// <summary>
         /// Sets the stop on defined node.
+        /// translate abouve message to chinese: 在定义的节点上设置停止
         /// </summary>
         /// <param name="collidesOnNode">The collides on node.</param>
         /// <exception cref="System.NotImplementedException"></exception>
         internal void SetStopBeforeNode(int node)
         {
-            LinkedListNode<Action> currentNode = _actions.First;
+            LinkedListNode<Action> currentNode = _actions.First; // current node is the first node in the list, example of current node: Goto 1 and Stop and Wait 5
 
             while (currentNode != null && currentNode.Next != null)
             {

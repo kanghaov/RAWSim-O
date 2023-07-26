@@ -26,10 +26,12 @@ namespace RAWSimO.MultiAgentPathFinding.Elements
         public bool IsObstacle = false;
         /// <summary>
         /// Indicates whether the node is part of a queue.
+        /// translate above to chinese: 是否是队列的一部分
         /// </summary>
         public bool IsQueue = false;
         /// <summary>
         /// If the node is part of a queue, this field contains the id of the terminal / destination node of the queue.
+        /// translate above to chinese: 如果节点是队列的一部分，则此字段包含队列的终端/目标节点的ID。
         /// </summary>
         public int QueueTerminal = -1;
     }

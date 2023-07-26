@@ -15,6 +15,7 @@ namespace RAWSimO.MultiAgentPathFinding.Methods
 
     /// <summary>
     /// Conflict-based for optimal multi-agent pathﬁnding, Sharon 2015
+    /// translates above into chinese: 基于冲突的最优多智能体路径规划
     /// </summary>
     public class CBSMethod : PathFinder
     {
