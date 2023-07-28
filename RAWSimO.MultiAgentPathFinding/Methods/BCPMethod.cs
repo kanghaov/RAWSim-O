@@ -13,6 +13,7 @@ namespace RAWSimO.MultiAgentPathFinding.Methods
 {
     /// <summary>
     /// Flow Annotation Re-planning by Ko-Hsin Cindy Wang and Adi Botea 2008
+    /// translate above into chinese:
     /// </summary>
     public class BCPMethod : PathFinder
     {

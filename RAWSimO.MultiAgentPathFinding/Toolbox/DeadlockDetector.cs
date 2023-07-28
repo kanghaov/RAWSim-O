@@ -17,10 +17,10 @@ namespace RAWSimO.MultiAgentPathFinding.Toolbox
         /// <summary>
         /// The maximum wait time
         /// </summary>
-        public double MaximumWaitTime;
+        public double MaximumWaitTime; 
 
         /// <summary>
-        /// The length of a wait step
+        /// The length of a wait step 
         /// </summary>
         public double LengthOfAWaitStep = 5;
 
@@ -58,7 +58,7 @@ namespace RAWSimO.MultiAgentPathFinding.Toolbox
         }
 
         /// <summary>
-        /// Updates the specified agents at the specified time.
+        /// Updates the specified agents at the specified time. 
         /// </summary>
         /// <param name="agents">The agents.</param>
         /// <param name="currentTime">The current time.</param>
@@ -68,11 +68,11 @@ namespace RAWSimO.MultiAgentPathFinding.Toolbox
             foreach (var agent in agents.Where(a => a.FixedPosition))
             {
                 // Update the waiting time, because this agent is actually not waiting
-                _waitingSince[agent.ID] = currentTime;
-                _waitNode[agent.ID] = agent.NextNode;
+                _waitingSince[agent.ID] = currentTime; // waiting time  
+                _waitNode[agent.ID] = agent.NextNode; // waiting node
             }
             //check if the agent is moving
-            foreach (var agent in agents.Where(a => !a.FixedPosition))
+            foreach (var agent in agents.Where(a => !a.FixedPosition)) // agent is moving
             {
                 if (!_waitingSince.ContainsKey(agent.ID))
                 {

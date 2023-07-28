@@ -18,6 +18,19 @@ namespace RAWSimO.MultiAgentPathFinding.Methods
     /// translates above into chinese: 基于冲突的最优多智能体路径规划
     /// </summary>
     public class CBSMethod : PathFinder
+    // 在C#中，public class CBSMethod : PathFinder表示定义了一个名为CBSMethod的公开类，该类继承自PathFinder类。下面是对这段代码的详细解释：
+
+    // public：这是一个访问修饰符，它决定了类的可见性。public表示该类可以被任何其他类访问。
+
+    // class：这是一个关键字，用于声明一个类。
+
+    // CBSMethod：这是类的名称。在这个例子中，类的名称是CBSMethod。
+
+    // :：这个符号在这个上下文中表示继承。在C#中，单冒号用于表示单一继承，即一个类只能继承一个基类。
+
+    // PathFinder：这是基类的名称。在这个例子中，CBSMethod类是从PathFinder类继承的。
+
+    // 继承是面向对象编程的一个重要特性，它允许创建一个新类（子类或派生类）来使用已存在的类（父类或基类）的成员（例如字段和方法）。继承的主要目的是为了代码复用和组织代码。它也可以用来表示“is-a”类型的关系，例如在这个例子中，CBSMethod是一种PathFinder。
     {
         /// <summary>
         /// The search method for node selection
@@ -26,16 +39,21 @@ namespace RAWSimO.MultiAgentPathFinding.Methods
 
         /// <summary>
         /// The reservation table for finding a way through constraints
+        /// translation: 用于通过约束找到一条路径的预约表
         /// </summary>
         private ReservationTable _reservationTable;
 
         /// <summary>
         /// The reservation table for collision detection
+        /// translation: 用于碰撞检测的预约表
         /// </summary>
         ReservationTable _agentReservationTable;
 
         /// <summary>
         /// Lambda Express for node selection
+        /// translation: 用于节点选择的Lambda表达式
+        /// 声明了一个名为 NodeSelectionExpression 的委托。委托是一种表示方法签名的类型，可用于将方法作为参数传递给其他方法或将方法存储为变量。
+        /// NodeSelectionExpression 委托接受一个 ConflictTree.Node 类型的参数，并返回一个 double 值。该委托的目的是定义一个方法，该方法可以根据某些标准选择冲突树中的节点
         /// </summary>
         /// <param name="node">The node.</param>
         /// <returns></returns>
@@ -43,6 +61,7 @@ namespace RAWSimO.MultiAgentPathFinding.Methods
 
         /// <summary>
         /// The deadlock handler
+        /// translation: 死锁处理程序
         /// </summary>
         private DeadlockHandler _deadlockHandler;
 
@@ -53,17 +72,18 @@ namespace RAWSimO.MultiAgentPathFinding.Methods
         /// <param name="seed">The seed to use for the randomizer.</param>
         /// <param name="logger">The logger to use.</param>
         public CBSMethod(Graph graph, int seed, PathPlanningCommunicator logger)
-            : base(graph, seed, logger)
+            : base(graph, seed, logger) // what is base:https://blog.csdn.net/yiyelanxin/article/details/88570151
         {
             if (graph.BackwardEdges == null)
                 graph.GenerateBackwardEgdes();
-            _reservationTable = new ReservationTable(graph);
-            _agentReservationTable = new ReservationTable(graph, false, true, false);
+            _reservationTable = new ReservationTable(graph); // _reservationTable是一个ReservationTable类型的变量，它是一个预约表，用于找到一条路径通过约束
+            _agentReservationTable = new ReservationTable(graph, false, true, false); // _agentReservationTable是一个ReservationTable类型的变量，它是一个预约表，用于碰撞检测
             _deadlockHandler = new DeadlockHandler(graph, seed);
         }
 
         /// <summary>
         /// Find the path for all the agents.
+        /// translation: 为所有智能体找到路径
         /// </summary>
         /// <param name="currentTime">The current Time.</param>
         /// <param name="agents">agents</param>
@@ -74,24 +94,31 @@ namespace RAWSimO.MultiAgentPathFinding.Methods
             //initialization data structures
             var conflictTree = new ConflictTree();
             var Open = new FibonacciHeap<double, ConflictTree.Node>();
+            // GitHub Copilot: 您选择的代码是 CBSMethod.cs 文件中的一段代码，包括第 94 行。这段代码创建了一个新的 FibonacciHeap<double, ConflictTree.Node> 对象，并将其赋值给 Open 变量。
+
+            // 在这段代码中，`double` 是一个数据类型，表示具有双精度的浮点数。它被用作 `FibonacciHeap` 类的 `TKey` 类型参数。`TKey` 参数指定堆中每个节点关联的优先级值的类型。
+
+            // `ConflictTree.Node` 是 `ConflictTree` 类中的一个嵌套类。它表示冲突树中的一个节点，并包含与该节点相关的约束信息。它被用作 `FibonacciHeap` 类的 `TValue` 类型参数。`TValue` 参数指定堆中每个节点关联的值的类型。
+
+            // 总的来说，这段代码创建了一个新的 FibonacciHeap<double, ConflictTree.Node> 对象，并将其赋值给 Open 变量。`double` 用于表示堆中每个节点关联的优先级值，而 `ConflictTree.Node` 用于表示堆中每个节点关联的值。
             var solvable = true;
             var generatedNodes = 0;
             ConflictTree.Node bestNode = null;
             double bestTime = 0.0;
 
             //deadlock handling
-            _deadlockHandler.LengthOfAWaitStep = LengthOfAWaitStep;
-            _deadlockHandler.MaximumWaitTime = 30;
+            _deadlockHandler.LengthOfAWaitStep = LengthOfAWaitStep; // LengthOfAWaitStep = 5
+            _deadlockHandler.MaximumWaitTime = 30; // MaximumWaitTime = 30
             _deadlockHandler.Update(agents, currentTime);
 
             //simply blocked
-            foreach (var agent in agents.Where(a => a.FixedPosition))
-                Graph.NodeInfo[agent.NextNode].IsLocked = true;
+            foreach (var agent in agents.Where(a => a.FixedPosition)) // judge agent is stop by FixedPosition
+                Graph.NodeInfo[agent.NextNode].IsLocked = true; // mark these agents is lock 
 
             // TODO this only works as long as a possible solution is guaranteed - maybe instead ignore paths to plan for agents with no possible solution and hope that it clears by others moving on?
             //first node initialization
             List<Agent> unsolvableAgents = null;
-            foreach (var agent in agents.Where(a => !a.FixedPosition))
+            foreach (var agent in agents.Where(a => !a.FixedPosition)) // agent is still moving
             {
                 bool agentSolved = Solve(conflictTree.Root, currentTime, agent);
                 if (!agentSolved)

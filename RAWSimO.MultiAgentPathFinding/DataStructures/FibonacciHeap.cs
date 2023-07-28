@@ -12,7 +12,7 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
         public enum HeapDirection
         {
             /// <summary>
-            /// Items are Dequeued in Increasing order from least to greatest.
+            /// Items are Dequeued in Increasing order from least to greatest. in chinese it is called 小根堆
             /// </summary>
             Increasing,
             /// <summary>

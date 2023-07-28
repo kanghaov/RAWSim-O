@@ -50,7 +50,7 @@ namespace RAWSimO.MultiAgentPathFinding.Elements
         public int FinalDestinationNode;
 
         /// <summary>
-        /// Agent has a fixed position.
+        /// Agent has a fixed position. into chinese : 代理人有一个固定的位置
         /// </summary>
         public bool FixedPosition;
 
