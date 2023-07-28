@@ -95,6 +95,7 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
 
             /// <summary>
             /// list constructor
+            /// translate into chinese: 构造函数,该类是一个封闭类
             /// </summary>
             internal FibonacciHeapHeapLinkedList()
             {
@@ -199,6 +200,7 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
 
         /// <summary>
         /// cell
+        /// 该类是一个封闭类，使用 sealed 关键字进行修饰，表示该类不能被继承。
         /// </summary>
         /// <typeparam name="TPriority">key</typeparam>
         /// <typeparam name="TValue">object</typeparam>
@@ -402,13 +404,13 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
                 var newNode =
                     new FibonacciHeapHeapCell<TPriority, TValue>
                     {
-                        Priority = Priority,
-                        Value = Value,
-                        Marked = false,
+                        Priority = Priority, // default(TPriority),like int is 0
+                        Value = Value, // default(TValue),
+                        Marked = false, // default(bool),like int is 0
                         Children = new FibonacciHeapHeapLinkedList<TPriority, TValue>(),
-                        Degree = 1,
+                        Degree = 1, // means the node is a leaf
                         Next = null,
-                        Previous = null,
+                        Previous = null, // diff with Parent , means the node is a leaf
                         Parent = null,
                         Removed = false
                     };
@@ -586,6 +588,7 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
 
             /// <summary>
             /// dequeue a pair
+            /// trainlate into chinese: 出队列
             /// </summary>
             /// <returns>pair</returns>
             public KeyValuePair<TPriority, TValue> Dequeue()

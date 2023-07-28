@@ -230,7 +230,7 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
                 {
                     //has this node a solution?
                     if (currentNode._reservation.ContainsKey(agentId))
-                        return currentNode._reservation[agentId];
+                        return currentNode._reservation[agentId]; // for example, the value of return is { [0] = { 0, 1 }, [1] = { 2, 3 } }
 
                     //this is an invariant
                     //The nodes only stores the solution for the agent where we added a constraint.

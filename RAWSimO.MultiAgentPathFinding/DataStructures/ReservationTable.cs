@@ -14,6 +14,7 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
     {
         /// <summary>
         /// The tolerance of time
+        /// translate into chinese is 时间的公差
         /// </summary>
         public static double TOLERANCE = 0.000000000001;
 
@@ -236,9 +237,13 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
 
         /// <summary>
         /// Checks weather the given interval intersects with an existing interval.
+        /// translate into chinese is 检查给定的间隔是否与现有间隔相交。
         /// </summary>
         /// <param name="interval">The interval.</param>
         /// <returns>false, if there is an intersection</returns>
+
+        ///在这个方法的实现中，首先传入了一个参数 interval 和一个输出参数 agentId。interval 是一个表示时间间隔的元组，包含了时间间隔的起始时间和结束时间。agentId 是一个输出参数，用于返回与时间间隔冲突的代理的 ID。
+        /// 在方法的实现中，首先调用了 IntersectionFree 方法的重载版本，传入了 interval.Node、interval.Start 和 interval.End 三个参数。IntersectionFree 方法是一个私有方法，用于检测一个时间间隔是否与其他时间间隔存在冲突。如果存在冲突，则将冲突代理的 ID 存储在输出参数 agentId 中，并返回 false。否则，返回 true。
         public bool IntersectionFree(Interval interval, out int agentId)
         {
             return IntersectionFree(interval.Node, interval.Start, interval.End, out agentId);
@@ -594,6 +599,7 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
 
         /// <summary>
         /// Gets the interval of the intersection with the intervals of this table and the given interval.
+        /// in chinese: 获取与此表的间隔和给定间隔的交集的间隔。
         /// </summary>
         /// <param name="interval">The interval that overlap with an existing one.</param>
         /// <returns>The overlapping interval</returns>
@@ -607,6 +613,7 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
 
         /// <summary>
         /// Interval
+        /// translate into chinese is 间隔
         /// </summary>
         public class Interval
         {

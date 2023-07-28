@@ -49,6 +49,8 @@ namespace RAWSimO.MultiAgentPathFinding.Methods
         /// </summary>
         ReservationTable _agentReservationTable;
 
+        /// 总的来说，下划线 _ 不是关键字或访问修饰符，它只是一种命名约定，用于表示私有字段或私有属性。在 C# 中，通常使用下划线 _ 作为私有字段的前缀，以区分它们与公共字段或属性。
+
         /// <summary>
         /// Lambda Express for node selection
         /// translation: 用于节点选择的Lambda表达式
@@ -120,18 +122,27 @@ namespace RAWSimO.MultiAgentPathFinding.Methods
             List<Agent> unsolvableAgents = null;
             foreach (var agent in agents.Where(a => !a.FixedPosition)) // agent is still moving
             {
-                bool agentSolved = Solve(conflictTree.Root, currentTime, agent);
-                if (!agentSolved)
+                bool agentSolved = Solve(conflictTree.Root, currentTime, agent); // solve the agent
+                if (!agentSolved) // agent is not solved
                 {
-                    if (unsolvableAgents == null)
-                        unsolvableAgents = new List<Agent>() { agent };
+                    // 使用了条件语句来检查 unsolvableAgents 变量是否为 null。如果 unsolvableAgents 变量为 null，则创建一个新的 List<Agent> 对象，并将当前智能体添加到该列表中。如果 unsolvableAgents 变量不为 null，则将当前智能体添加到现有的 List<Agent> 对象中。
+                    if (unsolvableAgents == null) // unsolvableAgents is null
+                        unsolvableAgents = new List<Agent>() { agent }; // structure of unsolvableAgents is a list,add current agent to unsolvableAgents
                     else
                         unsolvableAgents.Add(agent);
                 }
-                solvable = solvable && agentSolved;
+                solvable = solvable && agentSolved; // solvable is true if all agents are solved
             }
 
             //node selection strategy (Queue will pick the node with minimum value
+            //使用 NodeSelectionExpression 委托来选择下一个要扩展的节点。nodeObjectiveSelector 委托根据搜索方法的不同返回不同的值。如果搜索方法为 CBSSearchMethod.BestFirst，则返回节点的解决方案成本。如果搜索方法为 CBSSearchMethod.BreathFirst，则返回节点的深度。如果搜索方法为 CBSSearchMethod.DepthFirst，则返回节点的负深度。
+
+            //NodeSelectionExpression 委托是一个函数，它接受一个 Node 对象作为输入，并返回一个数字值。该数字值表示用于选择 CBS 算法中要扩展的下一个节点的目标函数。
+            //nodeObjectiveSelector 委托的类型是 NodeSelectionExpression，它是一个函数类型，接受一个 Node 对象作为输入，并返回一个数字值。在这里，nodeObjectiveSelector 委托的实现是一个 lambda 表达式，它接受一个 Node 对象作为输入，并将其直接返回。这意味着在这种情况下，nodeObjectiveSelector 委托不会改变选择下一个节点的目标函数。
+
+            //在 C# 中，= 是赋值运算符，用于将右侧的值赋给左侧的变量。例如，int x = 5; 将整数值 5 赋给变量 x。
+            // 而 => 是 lambda 表达式的语法。lambda 表达式是一种匿名函数，它可以作为参数传递给其他函数或委托。lambda 表达式的语法是 input => expression，其中 input 是输入参数，expression 是函数体。例如，(x, y) => x + y 是一个 lambda 表达式，它接受两个整数参数 x 和 y，并返回它们的和。
+            // 在这段代码中，= 是用于将 lambda 表达式赋值给 nodeObjectiveSelector 变量的赋值运算符。而 => 是 lambda 表达式的语法，用于定义 lambda 表达式的输入参数和函数体。
             NodeSelectionExpression nodeObjectiveSelector = node =>
             {
                 switch (SearchMethod)
@@ -147,29 +158,31 @@ namespace RAWSimO.MultiAgentPathFinding.Methods
                 }
             };
 
-            //Enqueue first node
-            if (solvable)
-                Open.Enqueue(conflictTree.Root.SolutionCost, conflictTree.Root);
+            //Enqueue first node, enqueue in chinese is 入队
+            // 使用了条件语句来检查 unsolvableAgents 变量是否为 null。如果 unsolvableAgents 变量为 null，则将冲突树的根节点添加到 Open 变量中。如果 unsolvableAgents 变量不为 null，则将冲突树的根节点添加到 Open 变量中，并将其解决方案成本设置为正无穷大。
+            if (solvable) // solvable is true if all agents are solved
+                Open.Enqueue(conflictTree.Root.SolutionCost, conflictTree.Root); // enqueue the root node
             else
                 Communicator.LogDefault("WARNING! Aborting CBS - could not obtain an initial solution for the following agents: " +
                     string.Join(",", unsolvableAgents.Select(a => "Agent" + a.ID.ToString() + "(" + a.NextNode.ToString() + "->" + a.DestinationNode.ToString() + ")")));
-            bestNode = conflictTree.Root;
+            bestNode = conflictTree.Root; // why the conflictTree.Root is the bestNode? because the conflictTree.Root is the first node,
 
             //search loop
-            ConflictTree.Node p = conflictTree.Root;
-            while (Open.Count > 0)
+            ConflictTree.Node p = conflictTree.Root; // p is the current node
+            while (Open.Count > 0) // > 0 means that the conflict agent is not solved
             {
 
                 //local variables
                 int agentId1;
-                int agentId2;
+                int agentId2; // agentId1 and agentId2 are the agents that conflict
                 ReservationTable.Interval interval;
 
                 //pop out best node
-                p = Open.Dequeue().Value;
+                p = Open.Dequeue().Value; // p is agent? or node? p is node,like the root node
 
                 //check the path
-                var hasNoConflicts = ValidatePath(p, agents, out agentId1, out agentId2, out interval);
+                // hasNoConflicts is a bool value, if the path has no conflicts, then hasNoConflicts is true
+                var hasNoConflicts = ValidatePath(p, agents, out agentId1, out agentId2, out interval); // p is a path list , agents is a list of agents, out agentId1 and agentId2 are the agents that conflict, out interval is the interval that the agents conflict
 
                 //has no conflicts?
                 if (hasNoConflicts)
@@ -217,33 +230,34 @@ namespace RAWSimO.MultiAgentPathFinding.Methods
             }
         }
 
+        /// this function is used to find out the agrnt that can solve the conflict
         private bool ValidatePath(ConflictTree.Node node, List<Agent> agents, out int agentId1, out int agentId2, out ReservationTable.Interval interval)
         {
             //clear
             _agentReservationTable.Clear();
 
             //add next hop reservations
-            foreach (var agent in agents.Where(a => !a.FixedPosition))
-                _agentReservationTable.Add(agent.ReservationsToNextNode, agent.ID);
+            foreach (var agent in agents.Where(a => !a.FixedPosition)) // agent is still moving
+                _agentReservationTable.Add(agent.ReservationsToNextNode, agent.ID); // add the agent's reservation to the next node
 
             //get all reservations sorted
-            var reservations = new FibonacciHeap<double, Tuple<Agent, ReservationTable.Interval>>();
-            foreach (var agent in agents.Where(a => !a.FixedPosition))
+            var reservations = new FibonacciHeap<double, Tuple<Agent, ReservationTable.Interval>>(); // reservations is a FibonacciHeap<double, Tuple<Agent, ReservationTable.Interval>> type variable, it is a heap, and the key is double, the value is Tuple<Agent, ReservationTable.Interval>
+            foreach (var agent in agents.Where(a => !a.FixedPosition)) // agent is still moving
                 foreach (var reservation in node.getReservation(agent.ID))
-                    reservations.Enqueue(reservation.Start, Tuple.Create(agent, reservation));
+                    reservations.Enqueue(reservation.Start, Tuple.Create(agent, reservation)); // for example, agent is agent1, reservation is (1,2), then the key is 1, the value is (agent1, (1,2))
 
             //check all reservations
             while (reservations.Count > 0)
             {
-                var reservation = reservations.Dequeue().Value;
+                var reservation = reservations.Dequeue().Value; // reservation is a tuple, the first element is agent, the second element is reservation
 
-                int collideWithAgentId;
-                var intersectionFree = _agentReservationTable.IntersectionFree(reservation.Item2, out collideWithAgentId);
-                if (!intersectionFree)
+                int collideWithAgentId; // collideWithAgentId is the agent that conflict with the agent
+                var intersectionFree = _agentReservationTable.IntersectionFree(reservation.Item2, out collideWithAgentId); // check if the reservation is intersection free, if it is not intersection free, then the collideWithAgentId is the agent that conflict with the agent
+                if (!intersectionFree) // means that agent1 and agent2 conflict
                 {
-                    agentId1 = collideWithAgentId;
-                    agentId2 = reservation.Item1.ID;
-                    interval = _agentReservationTable.GetOverlappingInterval(reservation.Item2);
+                    agentId1 = collideWithAgentId; // agentId1 is the agent that conflict with the agent
+                    agentId2 = reservation.Item1.ID; // agentId2 is the original agent
+                    interval = _agentReservationTable.GetOverlappingInterval(reservation.Item2);// interval is the interval that the agents conflict
                     if (interval.End - interval.Start > ReservationTable.TOLERANCE)
                         return false;
                 }
@@ -262,6 +276,7 @@ namespace RAWSimO.MultiAgentPathFinding.Methods
 
         /// <summary>
         /// Solves the specified node.
+        /// translation: 解决了指定的节点
         /// </summary>
         /// <param name="node">The node.</param>
         /// <param name="currentTime">The current time.</param>

@@ -132,6 +132,8 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
 
         /// <summary>
         /// Checks weather the given interval intersects with an existing interval.
+        /// in chinese: 检查给定的时间间隔是否与现有时间间隔相交。
+        /// 在这个方法的实现中，首先传入了两个参数 start 和 end，它们分别表示时间区间的起始时间和结束时间。另外还有一个输出参数 agentId，用于返回与时间区间冲突的代理的 ID。
         /// </summary>
         /// <param name="start">The start.</param>
         /// <param name="end">The end.</param>
