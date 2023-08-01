@@ -11,6 +11,7 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
 {
     /// <summary>
     /// conflict tree for CBS
+    /// in chinese it is called "冲突树"
     /// </summary>
     public class ConflictTree
     {
@@ -67,6 +68,7 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
 
             /// <summary>
             /// The children
+            /// struct of children is { [0] = { [0] = { [0] = null, [1] = null }, [1] = { [0] = null, [1] = null } }, [1] = { [0] = { [0] = null, [1] = null }, [1] = { [0] = null, [1] = null } } }
             /// </summary>
             public Node[] Children;
 
@@ -99,6 +101,7 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
 
             /// <summary>
             /// The constraint is valid for this agent
+            /// translate from chinese: 该约束对该agent是否有效
             /// </summary>
             public int AgentId;
 
@@ -160,15 +163,20 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
             public void setSolution(int agentId, Path path, List<ReservationTable.Interval> intervals)
             {
                 _solution[agentId] = path;
-                _reservation[agentId] = intervals;
+                _reservation[agentId] = intervals; // intervals's struct like { [0] = { 0, 1 }, [1] = { 2, 3 } }
                 
                 //root?
                 if (Parent == null)
                 {
                     //root node => Sum over all agents
                     SolutionCost = 0.0;
-                    foreach (var key in _reservation.Keys)
-                        SolutionCost += (_reservation[key].Count == 0) ? 0 : _reservation[key][_reservation[key].Count - 1].End - _reservation[key][0].Start;
+                    foreach (var key in _reservation.Keys) // agentId
+                        SolutionCost += (_reservation[key].Count == 0) ? 0 : _reservation[key]
+                        [_reservation[key].Count - 1].End - _reservation[key][0].Start;
+                        // _reservation[key].Count == 0 means that the agent has no reservation
+                        // ? :是一个三元运算符，它用于根据条件选择不同的值。如果条件为真，则选择第一个值；如果条件为假，则选择第二个值。
+                        // [_reservation[key].Count - 1].End - _reservation[key][0].Start; means
+
                 }
                 else
                 {
@@ -179,6 +187,7 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
 
             /// <summary>
             /// Gets the cost of an agent.
+            /// the cost means the time of the agent
             /// </summary>
             /// <param name="agentId">The agent identifier.</param>
             /// <returns>cost </returns>
@@ -247,6 +256,7 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
 
             /// <summary>
             /// Gets the constraints for a specific agent.
+            /// in chinese it is called "获取特定agent的约束"
             /// </summary>
             /// <param name="agentID">The agent identifier.</param>
             /// <returns></returns>
@@ -274,6 +284,7 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
                 } while (current != null);
 
                 return b.ToString();
+                /// b is like this:  Agent 0: (0) 0 - 1
             }
 
             /// <summary>

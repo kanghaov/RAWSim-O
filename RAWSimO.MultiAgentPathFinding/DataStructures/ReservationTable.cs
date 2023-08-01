@@ -624,11 +624,13 @@ namespace RAWSimO.MultiAgentPathFinding.DataStructures
 
             /// <summary>
             /// From
+            /// is that start means time or node? 
             /// </summary>
             public double Start;
 
             /// <summary>
             /// To
+            /// is that end means time or node? 
             /// </summary>
             public double End;
 
